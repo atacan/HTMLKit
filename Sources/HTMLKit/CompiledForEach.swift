@@ -1,7 +1,6 @@
 import NIO
 
 class CompiledForEach: RuntimeEvaluatable {
-
     private let _template: UnsafeByteBuffer
     private let arrayValueIndex: Int
     private let keyPathIndex: Int

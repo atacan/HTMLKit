@@ -2,7 +2,6 @@ import NIO
 import Foundation
 
 protocol RuntimeEvaluatable {
-
     func compileNextNode(
         template: inout UnsafeByteBuffer,
         into output: inout ByteBuffer,
@@ -10,7 +9,7 @@ protocol RuntimeEvaluatable {
     ) throws
 }
 
-public class CompiledTemplateEnviroment {
+public final class CompiledTemplateEnviroment {
     let keyPaths: [[AnyKeyPath]]
     let values: [Any]
     let runtimeEvaluated: [RuntimeEvaluatable]
@@ -225,12 +224,15 @@ public struct CompiledTemplate<Context> {
         
         var values: [Any] = []
         
+        // Approximation of the total values
+        values.reserveCapacity(keyPaths.count * 3)
+        
         for keyPath in keyPaths[0] {
             values.append(properties[keyPath: keyPath] ?? "")
         }
         if keyPaths.count > 1 {
             for i in 1..<keyPaths.count {
-                for _ in keyPaths[i - 1] {
+                for _ in keyPaths[i] {
                     values.append("")
                 }
             }
@@ -240,7 +242,7 @@ public struct CompiledTemplate<Context> {
             try CompiledTemplate<Context>.compileNextNode(
                 template: &template._template,
                 into: &output,
-                env: .init(
+                env: CompiledTemplateEnviroment(
                     keyPaths: keyPaths,
                     values: values,
                     runtimeEvaluated: runtimeEvaluated,

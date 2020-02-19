@@ -188,8 +188,9 @@ public struct TemplateCompiler {
             }
 
             buffer.writeInteger(CompiledNode.runtimeEvaluated.rawValue)
+            
+            // The index of the runtime evaluated element(s)
             buffer.writeInteger(runtimeEvaluated.count, endianness: .little)
-
             runtimeEvaluated.append(
                 CompiledForEach(
                     template: try unsafeBuffer(for: node),
